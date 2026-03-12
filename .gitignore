@@ -1,0 +1,48 @@
+```
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Environment variables
+.env
+.env.local
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+
+# Python cache (if any Python files are added later)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Testing
+.nyc_output/
+coverage/
+htmlcov/
+.coverage
+
+# Vite build cache
+.node_build/
+
+# PostCSS cache
+.postcss-cache/
+```
