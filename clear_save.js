@@ -1,0 +1,1 @@
+console.log('Скрипт для очистки localStorage в браузере:'); console.log('Открой консоль (F12) и выполни:'); console.log('localStorage.removeItem("gloryhole_quest_save")'); console.log('localStorage.clear()');

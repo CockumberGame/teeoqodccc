@@ -1,48 +1,24 @@
-```
-# Dependencies
-node_modules/
-
-# Build outputs
-dist/
-build/
-coverage/
-
-# Environment variables
-.env
-.env.local
-.env.*
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-
 # Logs
+logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Temporary files
-*.tmp
+node_modules
+dist
+dist-ssr
+*.local
 
-# Python cache (if any Python files are added later)
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# System files
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-Thumbs.db
-
-# Testing
-.nyc_output/
-coverage/
-htmlcov/
-.coverage
-
-# Vite build cache
-.node_build/
-
-# PostCSS cache
-.postcss-cache/
-```
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
