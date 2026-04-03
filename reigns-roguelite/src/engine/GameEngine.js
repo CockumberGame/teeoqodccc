@@ -235,6 +235,7 @@ class GameEngine {
    */
   startNextInteraction() {
     const client = this.deckManager.getCurrentClient();
+    this.currentClientIndex = this.deckManager.currentClientIndex;
 
     if (!client) {
       // Клиенты закончились - конец ночи
@@ -662,6 +663,7 @@ class GameEngine {
     // Переходим к следующему клиенту
     this.gameState = 'playing';
     this.deckManager.nextClient();
+    this.currentClientIndex = this.deckManager.currentClientIndex;
     this.interactionSession = null;
     this.currentActionCards = [];
 
@@ -721,6 +723,7 @@ class GameEngine {
 
     // Переходим к следующему клиенту
     this.deckManager.nextClient();
+    this.currentClientIndex = this.deckManager.currentClientIndex;
     this.interactionSession = null;
     this.currentActionCards = [];
 
@@ -793,8 +796,9 @@ class GameEngine {
    * Обновить терпение следующего клиента (Этап 2: реальная реализация)
    */
   updatePatienceForNextClient() {
-    const nextIndex = this.currentClientIndex + 1;
-    const clients = this.deckManager.clients || [];
+    const currentIndex = this.deckManager.currentClientIndex || 0;
+    const nextIndex = currentIndex + 1;
+    const clients = this.deckManager.clientQueue || [];
 
     if (nextIndex < clients.length) {
       const nextClient = clients[nextIndex];
@@ -1045,6 +1049,8 @@ class GameEngine {
    * Получить состояние игры
    */
   getGameState() {
+    const queueStats = this.deckManager.getStats();
+
     return {
       player: this.player,
       runState: this.runState.getState(),
@@ -1057,9 +1063,9 @@ class GameEngine {
       sessionStats: this.sessionStats,
       lastNightReason: this.lastNightReason,
       clientQueueStats: {
-        total: this.deckManager.getTotalCount(),
-        remaining: this.deckManager.getRemainingCount(),
-        current: this.currentClientIndex + 1
+        total: queueStats.total,
+        remaining: queueStats.remaining,
+        current: queueStats.total > 0 ? queueStats.currentIndex + 1 : 0
       }
     };
   }
@@ -1103,10 +1109,10 @@ class GameEngine {
         finished: state.isFinished,
         actionsTaken: state.turn
       },
-      currentActionCards: this.currentActionCards,
+      currentActionCards: this.currentActionCards.map(card => ({ ...card })),
       edgeTension: state.edgeTension,
       tensionLevel: state.tensionLevel,
-      actionHistory: state.actionHistory,
+      actionHistory: state.actionHistory.map(entry => ({ ...entry })),
       actionUsage: { ...this.actionDeckSystem.currentClientUsage }  // ← Копия объекта!
     };
   }
