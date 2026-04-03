@@ -296,6 +296,7 @@ class GameEngine {
       client.id,
       1  // turnNumber: первый ход
     );
+    this.ensureActionCardsForInteraction();
 
     this.eventBus.emit('interactionStarted', {
       clientId: client.id,
@@ -319,8 +320,10 @@ class GameEngine {
       return { success: false, reason: 'Нет активной встречи' };
     }
 
+    this.ensureActionCardsForInteraction();
+
     if (!this.currentActionCards[actionIndex]) {
-      return { success: false, reason: 'Неверный индекс карты' };
+      return { success: false, reason: 'Неверный индекс карты или нет доступных действий' };
     }
 
     const action = this.currentActionCards[actionIndex];
@@ -1099,6 +1102,7 @@ class GameEngine {
    */
   getActionState() {
     if (!this.interactionSession) return null;
+    this.ensureActionCardsForInteraction();
 
     const state = this.interactionSession.getState();
     const clientId = this.currentCard?.clientData?.id || null;
@@ -1115,6 +1119,47 @@ class GameEngine {
       actionHistory: state.actionHistory.map(entry => ({ ...entry })),
       actionUsage: { ...this.actionDeckSystem.currentClientUsage }  // ← Копия объекта!
     };
+  }
+
+  /**
+   * Защита от состояния "НЕТ ДЕЙСТВИЙ" при активной встрече:
+   * если карты пустые, пытаемся регенерировать их из актуального состояния сессии.
+   * @returns {boolean} true если карты доступны после проверки
+   */
+  ensureActionCardsForInteraction() {
+    if (!this.interactionSession) return false;
+    if (this.currentActionCards.length > 0) return true;
+
+    const client = this.currentCard?.clientData || this.interactionSession.client;
+    if (!client) return false;
+
+    const clientId = client.id || this.interactionSession.client?.id;
+    if (!clientId) return false;
+
+    const turnNumber = (this.interactionSession.turn || 0) + 1;
+    const sessionClient = {
+      ...client,
+      arousal: this.interactionSession.client.arousal
+    };
+
+    this.currentActionCards = this.actionDeckSystem.generateActionCards(
+      sessionClient,
+      this.player,
+      this.skillSystem,
+      clientId,
+      turnNumber
+    );
+
+    if (this.currentActionCards.length > 0) {
+      this.eventBus.emit('actionCardsRecovered', {
+        clientId,
+        turnNumber,
+        cardsCount: this.currentActionCards.length
+      });
+      return true;
+    }
+
+    return false;
   }
 
   /**

@@ -146,6 +146,29 @@ test('getActionState возвращает иммутабельные копии 
   assert(secondState.currentActionCards.length > 0, 'Мутация UI-копии не должна ломать engine state');
 });
 
+test('ensureActionCardsForInteraction восстанавливает карты если они очищены', () => {
+  const engine = new GameEngine();
+  engine.initPlayer('Тест');
+  engine.startNightSession();
+
+  engine.currentActionCards = [];
+  const recovered = engine.ensureActionCardsForInteraction();
+
+  assert(recovered === true, 'Карты должны восстановиться');
+  assert(engine.currentActionCards.length > 0, 'После восстановления карты не должны быть пустыми');
+});
+
+test('playActionCard пытается самовосстановить карты перед ходом', () => {
+  const engine = new GameEngine();
+  engine.initPlayer('Тест');
+  engine.startNightSession();
+
+  engine.currentActionCards = [];
+  const result = engine.playActionCard(0);
+
+  assert(result.success === true, 'Действие должно выполниться после самовосстановления карт');
+});
+
 test('playActionCard тратит стамину', () => {
   const engine = new GameEngine();
   engine.initPlayer('Тест');
