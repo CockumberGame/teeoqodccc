@@ -1,0 +1,44 @@
+{
+  "_comment": "ЗАПОЛНИТЬ САМОСТОЯТЕЛЬНО — контент для взрослых",
+  "_description": "Кастомная матрица совместимости тегов для TagInteractionSystem",
+  "_usage": "Добавляйте свои комбинации: actionTag_characterTrait: modifier",
+  "_modifierRange": "0.5 = -50% (штраф), 1.0 = нейтрально, 2.0 = +100% (бонус)",
+
+  "customCompatibility": {
+    "_examples": {
+      "gentle_shy": 1.3,
+      "rough_shy": 0.6,
+      "slow_gentle": 1.3,
+      "fast_impatient": 1.4
+    },
+
+    "_placeholder": "Добавьте свои комбинации выше"
+  },
+
+  "tagGroups": {
+    "_comment": "Группы тегов для упрощения (если тег не найден напрямую)",
+    "gentle": ["gentle", "soft", "tender", "mild"],
+    "rough": ["rough", "hard", "intense", "wild"],
+    "slow": ["slow", "lazy", "calm", "leisurely"],
+    "fast": ["fast", "quick", "rapid", "swift"],
+    "teasing": ["teasing", "playful", "flirty"],
+    "intimate": ["intimate", "close", "personal"],
+    "risky": ["risky", "bold", "daring"],
+    "supportive": ["supportive", "encouraging", "warm"]
+  },
+
+  "traitDescriptions": {
+    "shy": "Застенчивый, нуждается в мягком подходе",
+    "nervous": "Нервный, требует поддержки",
+    "gentle": "Нежный, любит ласку",
+    "rough": "Грубый, предпочитает жёсткое обращение",
+    "dominant": "Доминирующий, хочет контролировать",
+    "submissive": "Покорный, любит подчиняться",
+    "impatient": "Нетерпеливый, хочет быстро",
+    "curious": "Любопытный, открыт экспериментам",
+    "experienced": "Опытный, сложно удивить",
+    "thrill_seeker": "Искатель острых ощущений, любит риск",
+    "loyal": "Преданный, возвращается к проверенному",
+    "generous": "Щедрый, оставляет чаевые"
+  }
+}

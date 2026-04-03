@@ -1,0 +1,219 @@
+{
+  "wealthy": {
+    "id": "wealthy",
+    "name": "Состоятельный",
+    "description": "Клиент с деньгами, платит больше обычного",
+    "effects": {
+      "payoutMultiplier": 1.5,
+      "baseRewardBonus": 20,
+      "tipMultiplier": 2.0,
+      "reputationBonus": 1.2
+    },
+    "difficulty": {
+      "satisfactionThreshold": 70,
+      "skillRequirement": 1.1
+    },
+    "rarity": 0.08,
+    "compatibleTypes": ["regular", "vip", "generous"],
+    "incompatibleTypes": ["newbie"]
+  },
+  "impatient": {
+    "id": "impatient",
+    "name": "Нетерпеливый",
+    "description": "Требует быстрого обслуживания, легко раздражается",
+    "effects": {
+      "payoutMultiplier": 0.85,
+      "patienceDecay": 1.5,
+      "moodDecay": 1.3,
+      "arousalGrowth": 1.2
+    },
+    "difficulty": {
+      "satisfactionThreshold": 50,
+      "patienceThreshold": 30
+    },
+    "rarity": 0.12,
+    "compatibleTypes": ["regular", "demanding", "vip"],
+    "incompatibleTypes": ["shy", "gentle"]
+  },
+  "experienced": {
+    "id": "experienced",
+    "name": "Опытный",
+    "description": "Видал многое, сложно удивить",
+    "effects": {
+      "payoutMultiplier": 1.3,
+      "satisfactionBonus": -10,
+      "xpBonus": 1.2,
+      "skillXpMultiplier": 1.3
+    },
+    "difficulty": {
+      "satisfactionThreshold": 75,
+      "skillRequirement": 1.2
+    },
+    "rarity": 0.10,
+    "compatibleTypes": ["regular", "vip", "rough"],
+    "incompatibleTypes": ["newbie", "nervous"]
+  },
+  "generous": {
+    "id": "generous",
+    "name": "Щедрый",
+    "description": "Любит оставлять чаевые, более терпелив",
+    "effects": {
+      "payoutMultiplier": 1.2,
+      "tipChance": 0.6,
+      "tipMultiplier": 1.5,
+      "patienceMultiplier": 1.3,
+      "satisfactionBonus": 10
+    },
+    "difficulty": {
+      "satisfactionThreshold": 55,
+      "patienceThreshold": 20
+    },
+    "rarity": 0.15,
+    "compatibleTypes": ["regular", "gentle", "shy"],
+    "incompatibleTypes": ["demanding", "rough"]
+  },
+  "mysterious": {
+    "id": "mysterious",
+    "name": "Загадочный",
+    "description": "Скрытный, мало говорит, любит сюрпризы",
+    "effects": {
+      "payoutMultiplier": 1.1,
+      "inspectionPenalty": -1,
+      "surpriseBonus": 0.2,
+      "moodVariance": 1.3
+    },
+    "difficulty": {
+      "satisfactionThreshold": 60,
+      "readability": 0.7
+    },
+    "rarity": 0.10,
+    "compatibleTypes": ["regular", "curious", "rough"],
+    "incompatibleTypes": ["chatty", "needy"]
+  },
+  "chatty": {
+    "id": "chatty",
+    "name": "Разговорчивый",
+    "description": "Любит поболтать, требует социального взаимодействия",
+    "effects": {
+      "payoutMultiplier": 0.95,
+      "charismaRequirement": 1.2,
+      "timePenalty": 1.1,
+      "socialBonus": 0.15
+    },
+    "difficulty": {
+      "satisfactionThreshold": 65,
+      "charismaThreshold": 2
+    },
+    "rarity": 0.12,
+    "compatibleTypes": ["regular", "friendly", "newbie"],
+    "incompatibleTypes": ["quiet", "rough"]
+  },
+  "quiet": {
+    "id": "quiet",
+    "name": "Молчаливый",
+    "description": "Предпочитает действия словам",
+    "effects": {
+      "payoutMultiplier": 1.0,
+      "charismaRequirement": 0.8,
+      "skillRequirement": 1.05,
+      "timeBonus": 0.95
+    },
+    "difficulty": {
+      "satisfactionThreshold": 60,
+      "skillThreshold": 2
+    },
+    "rarity": 0.14,
+    "compatibleTypes": ["regular", "shy", "gentle"],
+    "incompatibleTypes": ["chatty", "demanding"]
+  },
+  "needy": {
+    "id": "needy",
+    "name": "Нуждающийся",
+    "description": "Требует много внимания и подтверждения",
+    "effects": {
+      "payoutMultiplier": 0.9,
+      "attentionRequirement": 1.4,
+      "validationBonus": 0.2,
+      "staminaDrain": 1.1
+    },
+    "difficulty": {
+      "satisfactionThreshold": 70,
+      "attentionThreshold": 3
+    },
+    "rarity": 0.08,
+    "compatibleTypes": ["newbie", "shy", "nervous"],
+    "incompatibleTypes": ["rough", "experienced"]
+  },
+  "dominant": {
+    "id": "dominant",
+    "name": "Доминирующий",
+    "description": "Любит контролировать ситуацию",
+    "effects": {
+      "payoutMultiplier": 1.25,
+      "roughnessBonus": 0.3,
+      "submissionRequirement": 1.2,
+      "enduranceDrain": 1.15
+    },
+    "difficulty": {
+      "satisfactionThreshold": 65,
+      "enduranceThreshold": 3
+    },
+    "rarity": 0.10,
+    "compatibleTypes": ["rough", "demanding", "vip"],
+    "incompatibleTypes": ["gentle", "shy", "newbie"]
+  },
+  "submissive": {
+    "id": "submissive",
+    "name": "Покорный",
+    "description": "Любит подчиняться, легко удовлетворить",
+    "effects": {
+      "payoutMultiplier": 0.95,
+      "gentlenessBonus": 0.2,
+      "satisfactionBonus": 10,
+      "controlRequirement": 0.8
+    },
+    "difficulty": {
+      "satisfactionThreshold": 50,
+      "gentlenessThreshold": 2
+    },
+    "rarity": 0.12,
+    "compatibleTypes": ["gentle", "newbie", "shy"],
+    "incompatibleTypes": ["dominant", "demanding"]
+  },
+  "sensitive": {
+    "id": "sensitive",
+    "name": "Чувствительный",
+    "description": "Остро реагирует на прикосновения",
+    "effects": {
+      "payoutMultiplier": 1.05,
+      "arousalGrowth": 1.3,
+      "climaxRisk": 1.2,
+      "gentlenessRequirement": 1.1
+    },
+    "difficulty": {
+      "satisfactionThreshold": 60,
+      "controlThreshold": 3
+    },
+    "rarity": 0.10,
+    "compatibleTypes": ["gentle", "shy", "newbie"],
+    "incompatibleTypes": ["rough", "experienced"]
+  },
+  "thrill_seeker": {
+    "id": "thrill_seeker",
+    "name": "Искатель острых ощущений",
+    "description": "Любит риск и эксперименты",
+    "effects": {
+      "payoutMultiplier": 1.35,
+      "riskBonus": 0.25,
+      "varietyRequirement": 1.3,
+      "boredomRate": 1.2
+    },
+    "difficulty": {
+      "satisfactionThreshold": 70,
+      "varietyThreshold": 3
+    },
+    "rarity": 0.07,
+    "compatibleTypes": ["curious", "rough", "experienced"],
+    "incompatibleTypes": ["shy", "gentle", "newbie"]
+  }
+}

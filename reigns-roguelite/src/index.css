@@ -1,0 +1,561 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Press Start 2P', cursive, monospace;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: #f0f0f0;
+  background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* iPhone 17 style container - ограничиваем ширину */
+.game-container {
+  width: 100%;
+  max-width: 393px; /* iPhone 17 Pro Max width */
+  height: 100%;
+  max-height: 852px; /* iPhone 17 Pro Max height */
+  background: linear-gradient(180deg, #1a0a2e 0%, #16213e 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Скроллбар для контента */
+.game-container ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.game-container ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.game-container ::-webkit-scrollbar-thumb {
+  background: #e94560;
+  border-radius: 3px;
+}
+
+/* Общие стили для экранов */
+.name-input-screen,
+.hub-screen,
+.game-screen {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Заголовки */
+.game-title {
+  font-size: 24px;
+  color: #e94560;
+  text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.game-subtitle {
+  font-size: 12px;
+  color: #a0a0a0;
+  text-align: center;
+  margin-top: 0;
+}
+
+/* Кнопки */
+button {
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Анимации */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(233, 69, 96, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(233, 69, 96, 0.8); }
+}
+
+.pulse-animation {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.glow-animation {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* ===================== */
+/* CardView стили */
+/* ===================== */
+.card-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border: 2px solid rgba(233, 69, 96, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.card-icon {
+  font-size: 32px;
+}
+
+.difficulty-badge {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: #000;
+  font-weight: bold;
+}
+
+.payout-badge {
+  font-size: 11px;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.2);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.card-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #f0f0f0;
+  margin-bottom: 15px;
+  min-height: 60px;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 15px;
+}
+
+.card-tag {
+  font-size: 9px;
+  color: #a0a0a0;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.client-info {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.client-stat {
+  font-size: 10px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.client-fetishes {
+  font-size: 10px;
+  color: #e94560;
+  margin-top: 6px;
+}
+
+/* Choices container - Reigns style: горизонтально как карты в руке */
+.choices-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 100%;
+}
+
+.choice-button {
+  flex: 1;
+  min-width: 0;
+  background: linear-gradient(135deg, rgba(233, 69, 96, 0.2) 0%, rgba(15, 52, 96, 0.3) 100%);
+  border: 2px solid rgba(233, 69, 96, 0.4);
+  border-radius: 12px;
+  padding: 15px 12px;
+  color: #f0f0f0;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+}
+
+.choice-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #e94560 0%, #c73659 100%);
+  transition: height 0.2s ease;
+}
+
+.choice-button:hover {
+  background: linear-gradient(135deg, rgba(233, 69, 96, 0.3) 0%, rgba(15, 52, 96, 0.4) 100%);
+  border-color: rgba(233, 69, 96, 0.6);
+  transform: translateY(-5px);
+}
+
+.choice-button:hover::before {
+  height: 6px;
+}
+
+.choice-button:active {
+  transform: translateY(-8px);
+}
+
+.choice-text {
+  display: block;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.success-chance {
+  font-size: 8px;
+  color: #888;
+  display: block;
+  margin-top: auto;
+}
+
+/* ===================== */
+/* StatsPanel стили */
+/* ===================== */
+.stats-panel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(233, 69, 96, 0.3);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+/* Новые статы в ряд */
+.stats-row-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.inline-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.inline-stat-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.inline-stat-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  width: 50px;
+  flex-shrink: 0;
+}
+
+.inline-stat-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.inline-stat-value {
+  font-size: 9px;
+  color: #f0f0f0;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.stamina-stat .inline-stat-bar-fill {
+  background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+}
+
+.mental-stat .inline-stat-bar-fill {
+  background: linear-gradient(90deg, #60a5fa 0%, #3b82f6 100%);
+}
+
+.money-stat .inline-stat-value {
+  color: #fbbf24;
+  font-weight: bold;
+}
+
+.level-stat .inline-stat-value {
+  color: #f472b6;
+}
+
+/* Старые стили */
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.stats-row:last-child {
+  margin-bottom: 0;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: #a0a0a0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-value {
+  font-size: 11px;
+  color: #f0f0f0;
+}
+
+.stat-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 80px;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.stamina-fill {
+  background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+}
+
+.mental-fill {
+  background: linear-gradient(90deg, #60a5fa 0%, #3b82f6 100%);
+}
+
+.time-display {
+  text-align: center;
+  font-size: 14px;
+  color: #e94560;
+  padding: 8px;
+  background: rgba(233, 69, 96, 0.1);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+/* ===================== */
+/* Night Ended Screen */
+/* ===================== */
+.night-ended-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.night-title {
+  font-size: 28px;
+  color: #fbbf24;
+  margin-bottom: 5px;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.night-subtitle {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 30px;
+}
+
+.night-summary {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(233, 69, 96, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #f0f0f0;
+  margin-bottom: 10px;
+}
+
+.summary-item:last-child {
+  margin-bottom: 0;
+}
+
+.summary-icon {
+  font-size: 18px;
+}
+
+.continue-button {
+  background: linear-gradient(135deg, #e94560 0%, #c73659 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 15px 40px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.continue-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(233, 69, 96, 0.5);
+}
+
+/* ===================== */
+/* Game Over Screen */
+/* ===================== */
+.game-over-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.game-over-title {
+  font-size: 32px;
+  color: #ef4444;
+  margin-bottom: 10px;
+  text-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+
+.game-over-reason {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 30px;
+}
+
+.restart-button {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 15px 40px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.restart-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+}
+
+/* ===================== */
+/* Game Screen Layout */
+/* ===================== */
+.game-screen {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.game-stats-header {
+  flex-shrink: 0;
+}
+
+.game-card-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.quit-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 12px 20px;
+  color: #f0f0f0;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 15px;
+}
+
+.quit-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(233, 69, 96, 0.5);
+}

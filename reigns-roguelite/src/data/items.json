@@ -1,0 +1,120 @@
+{
+  "bed_basic": {
+    "id": "bed_basic",
+    "name": "Кровать ур.1",
+    "description": "Восстанавливает 50 стамины за ночь",
+    "price": 500,
+    "category": "bed",
+    "icon": "🛏️",
+    "bedLevel": 1,
+    "staminaRestore": 50
+  },
+  "bed_upgrade_1": {
+    "id": "bed_upgrade_1",
+    "name": "Кровать ур.2",
+    "description": "Восстанавливает 100 стамины за ночь",
+    "price": 1000,
+    "category": "bed",
+    "icon": "🛏️",
+    "bedLevel": 2,
+    "staminaRestore": 100,
+    "requires": "bed_basic"
+  },
+  "bed_upgrade_2": {
+    "id": "bed_upgrade_2",
+    "name": "Кровать ур.3",
+    "description": "Восстанавливает 200 стамины за ночь",
+    "price": 2000,
+    "category": "bed",
+    "icon": "🛏️",
+    "bedLevel": 3,
+    "staminaRestore": 200,
+    "requires": "bed_upgrade_1"
+  },
+  "ice_cream": {
+    "id": "ice_cream",
+    "name": "Мороженое 🍦",
+    "description": "Восстанавливает 50 психики (1 раз в день)",
+    "price": 35,
+    "category": "consumable",
+    "icon": "🍦",
+    "effect": {
+      "type": "mental_restore",
+      "mentalRestore": 50,
+      "dailyLimit": 1
+    }
+  },
+  "energy_drink_2": {
+    "id": "energy_drink_2",
+    "name": "Энергетик XL ⚡",
+    "description": "Восстанавливает 50 стамины (1 раз в день)",
+    "price": 40,
+    "category": "consumable",
+    "icon": "⚡",
+    "effect": {
+      "type": "stamina_restore",
+      "staminaRestore": 50,
+      "dailyLimit": 1
+    }
+  },
+  "ruler": {
+    "id": "ruler",
+    "name": "Линейка",
+    "description": "Позволяет точно измерить размер (100% точность)",
+    "price": 30,
+    "category": "tool",
+    "icon": "📏",
+    "actionLinks": ["observe_client"],
+    "skillRequirement": "visual_assessment",
+    "effect": {
+      "type": "reveal_size",
+      "accuracy": 1.0,
+      "clientReactions": {
+        "shy": { "patience": -10, "approval": -5 },
+        "proud": { "approval": 15, "arousal": 5 }
+      }
+    }
+  },
+  "lube": {
+    "id": "lube",
+    "name": "Лубрикант",
+    "description": "Увеличивает arousal gain на +3 за ход",
+    "price": 25,
+    "category": "consumable",
+    "icon": "💧",
+    "actionLinks": ["normal_rhythm", "deep_throat", "hand_work", "intense_suction"],
+    "effect": {
+      "type": "arousal_boost",
+      "arousalBonus": 3,
+      "uses": 5
+    }
+  },
+  "energy_drink": {
+    "id": "energy_drink",
+    "name": "Энергетик",
+    "description": "Восстанавливает 5 стамины мгновенно",
+    "price": 15,
+    "category": "consumable",
+    "icon": "⚡",
+    "actionLinks": [],
+    "effect": {
+      "type": "stamina_restore",
+      "staminaRestore": 5,
+      "uses": 1
+    }
+  },
+  "charm_bracelet": {
+    "id": "charm_bracelet",
+    "name": "Браслет с шармом",
+    "description": "+10% к доверию от клиентов",
+    "price": 50,
+    "category": "accessory",
+    "icon": "📿",
+    "actionLinks": [],
+    "passive": true,
+    "effect": {
+      "type": "trust_bonus",
+      "trustMultiplier": 0.10
+    }
+  }
+}

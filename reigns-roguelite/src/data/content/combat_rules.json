@@ -1,0 +1,334 @@
+{
+  "_meta": {
+    "description": "Формулы боя — карточная система сражения с клиентами",
+    "version": "0.7.0",
+    "date": "2026-03-23"
+  },
+
+  "combat": {
+    "description": "Бой = повышение arousal клиента до 100% (как HP в минус)",
+    "goal": "Достичь 100% arousal за 3-5 ходов",
+    "averageTurns": 4,
+    "cardsPerTurn": 2
+  },
+
+  "arousal": {
+    "start": {
+      "base": 0,
+      "appearanceBonus": "appearance.level × 2 (макс 20%)",
+      "clientTypeModifiers": {
+        "easy": 10,
+        "normal": 0,
+        "hard": -5,
+        "vip": 15
+      }
+    },
+
+    "gain": {
+      "formula": "baseArousal × phaseMultiplier × (1 + skillBonus) × diminishingReturns",
+      "baseArousal": "Из actions.json (8-60 в зависимости от карты)",
+      "phaseMultiplier": "Из phases.json (0.8-2.0)",
+      "skillBonus": "hand_skill/oral_skill/etc. level × 0.05",
+      "diminishingReturns": {
+        "firstUse": 1.0,
+        "secondConsecutive": 0.75,
+        "thirdConsecutive": 0.50,
+        "fourthPlus": 0.25
+      }
+    },
+
+    "loss": {
+      "teasing": "arousal × (0.10 + teasing_skill.level × 0.02)",
+      "failedAction": "action.failureLoss × 1.5 (gets_softer)",
+      "naturalDecay": 0
+    }
+  },
+
+  "success": {
+    "formula": "baseChance + skillBonus - phasePenalty - diminishingReturns",
+    "baseChance": "Из actions.json (0.40-0.95)",
+    "skillBonus": "relevantSkill.level × 0.05",
+    "phasePenalty": {
+      "soft": -0.20,
+      "interested": 0,
+      "excited": 0.05,
+      "ready": 0.10,
+      "edge": 0.05,
+      "climax": 0
+    },
+    "diminishingReturns": {
+      "consecutive2": -0.10,
+      "consecutive3": -0.25,
+      "consecutive4Plus": -0.40
+    },
+    "appearanceBonus": "appearance.level × 0.02",
+    "cap": {
+      "min": 0.10,
+      "max": 0.95
+    }
+  },
+
+  "reward": {
+    "formula": "baseReward × sizeMultiplier × phaseMultiplier × (1 + appearanceBonus + edgeBonus) × satisfaction",
+    "baseReward": 30,
+    "sizeMultiplier": {
+      "small": 0.8,
+      "average": 1.0,
+      "large": 1.3,
+      "huge": 1.6,
+      "legendary": 2.0
+    },
+    "phaseMultiplier": {
+      "soft": 0.8,
+      "interested": 1.0,
+      "excited": 1.25,
+      "ready": 1.5,
+      "edge": 1.8,
+      "climax": 2.0
+    },
+    "appearanceBonus": "appearance.level × 0.05",
+    "edgeBonus": "teasing_skill.level × 0.05 (только в edge фазе)",
+    "satisfaction": {
+      "base": 0.5,
+      "perfect": 1.0,
+      "fail": 0.2
+    },
+    "tipChance": "base 0.20 + appearance.level × 0.10 + levelBonuses",
+    "tipAmount": "reward × (0.10-0.30)"
+  },
+
+  "xp": {
+    "formula": "baseXP × (1 + phaseBonus) × firstClientBonus",
+    "baseXP": "Из actions.json (2-30)",
+    "phaseBonus": {
+      "soft": 0,
+      "interested": 0.1,
+      "excited": 0.2,
+      "ready": 0.3,
+      "edge": 0.5,
+      "climax": 0.7
+    },
+    "firstClientBonus": 0.5
+  },
+
+  "stamina": {
+    "cost": {
+      "formula": "baseCost × (1 + phaseStaminaModifier)",
+      "baseCost": "Из actions.json (3-20)",
+      "phaseStaminaModifier": {
+        "soft": 0.3,
+        "interested": 0,
+        "excited": 0,
+        "ready": 0,
+        "edge": 0.1,
+        "climax": 0
+      }
+    }
+  },
+
+  "mental": {
+    "cost": {
+      "formula": "baseCost × (1 + phaseMentalModifier)",
+      "baseCost": "Из actions.json (0-8)",
+      "phaseMentalModifier": {
+        "soft": 0.5,
+        "interested": 0,
+        "excited": 0,
+        "ready": 0,
+        "edge": 0.2,
+        "climax": 0
+      },
+      "getsSofterPenalty": 5
+    }
+  },
+
+  "client": {
+    "queue": {
+      "formula": "baseClients + floor(reputation / 20) + random(0-1)",
+      "baseClients": 3,
+      "reputationDivisor": 20,
+      "randomBonusMax": 1
+    },
+
+    "levelRange": {
+      "formula": "playerReputationLevel ± 3",
+      "minLevel": 1,
+      "maxLevel": "playerReputationLevel + 3",
+      "preventTooEasy": "Не более 50% клиентов ниже уровня игрока"
+    },
+
+    "tiers": {
+      "common": {
+        "id": "common",
+        "name": "Обычный",
+        "color": "⚪",
+        "colorHex": "#9ca3af",
+        "chance": 0.50,
+        "multiplier": 1.0,
+        "minReputation": 0
+      },
+      "uncommon": {
+        "id": "uncommon",
+        "name": "Необычный",
+        "color": "🟢",
+        "colorHex": "#22c55e",
+        "chance": 0.30,
+        "multiplier": 1.3,
+        "minReputation": 20
+      },
+      "rare": {
+        "id": "rare",
+        "name": "Редкий",
+        "color": "🔵",
+        "colorHex": "#3b82f6",
+        "chance": 0.15,
+        "multiplier": 1.6,
+        "minReputation": 50
+      },
+      "epic": {
+        "id": "epic",
+        "name": "Эпический",
+        "color": "🟣",
+        "colorHex": "#a855f7",
+        "chance": 0.04,
+        "multiplier": 2.0,
+        "minReputation": 100
+      },
+      "legendary": {
+        "id": "legendary",
+        "name": "Легендарный",
+        "color": "🟠",
+        "colorHex": "#f97316",
+        "chance": 0.01,
+        "multiplier": 3.0,
+        "minReputation": 200
+      }
+    },
+
+    "types": {
+      "normal": {
+        "id": "normal",
+        "name": "Обычный клиент",
+        "chance": 0.70,
+        "arousalStart": 0,
+        "patience": 100
+      },
+      "vip": {
+        "id": "vip",
+        "name": "VIP",
+        "chance": 0.10,
+        "arousalStart": 15,
+        "patience": 80,
+        "rewardMultiplier": 3.0,
+        "requirement": "reputation >= 50"
+      },
+      "regular": {
+        "id": "regular",
+        "name": "Постоянный",
+        "chance": 0.15,
+        "arousalStart": 10,
+        "patience": 120,
+        "returnChance": 0.60,
+        "trustBonus": 0.10
+      },
+      "boss": {
+        "id": "boss",
+        "name": "Босс",
+        "chance": 0.05,
+        "arousalStart": 25,
+        "patience": 150,
+        "rewardMultiplier": 5.0,
+        "specialDrop": true,
+        "requirement": "reputation >= 100"
+      }
+    }
+  },
+
+  "cardGeneration": {
+    "rules": {
+      "cardsPerTurn": 2,
+      "guaranteedPhaseCard": true,
+      "guaranteedNeighborIntensity": true
+    },
+    "algorithm": {
+      "step1": "Определить текущую фазу клиента",
+      "step2": "Получить доступные игроку карты (по навыкам и предметам)",
+      "step3": "Выбрать 1 карту под текущую фазу (или соседнюю интенсивность)",
+      "step4": "Выбрать 1 случайную карту из доступных",
+      "step5": "Если нет карт под фазу → 'одолжить' базовую карту"
+    },
+    "fallbackLend": {
+      "enabled": true,
+      "priority": ["hand_soft", "head_soft", "bj_soft"],
+      "description": "Игра временно даёт карту, если у игрока нет доступа"
+    }
+  },
+
+  "gets_softer": {
+    "trigger": "action.failed AND arousalLoss > 0",
+    "effects": {
+      "mentalDamage": 5,
+      "clientLeaveChance": 0.30,
+      "patienceLoss": 15,
+      "arousalLossMultiplier": 1.5,
+      "visualEffect": "gray_filter"
+    },
+    "recovery": {
+      "autoRecoverTurns": 1,
+      "teasingActions": ["t_ease_soft", "t_ease_mid", "t_ease_intense"]
+    }
+  },
+
+  "edgeStacking": {
+    "enabled": true,
+    "description": "Накопление бонусов через дразнение в edge фазе",
+    "edgePhaseThreshold": 75,
+    "arousalResetTo": 70,
+    "maxStacks": 5,
+    "bonusPerStack": {
+      "moneyMultiplier": 0.10,
+      "xpBonus": 2,
+      "reputationBonus": 1
+    },
+    "teasingActions": ["t_ease_soft", "t_ease_mid", "t_ease_intense", "t_ease_special"],
+    "stackDecay": {
+      "onClimax": 0,
+      "onClientLeave": 1,
+      "onNightEnd": "all"
+    },
+    "visualIndicator": {
+      "icon": "⚡",
+      "color": "#f97316",
+      "position": "above_arousal_bar"
+    }
+  },
+
+  "climax": {
+    "threshold": 95,
+    "choices": [
+      {
+        "id": "finish_quick",
+        "name": "Быстрый финал",
+        "arousalRequired": 95,
+        "satisfactionRange": [70, 90],
+        "timeCost": 1,
+        "staminaCost": 5
+      },
+      {
+        "id": "finish_slow",
+        "name": "Медленный финал",
+        "arousalRequired": 95,
+        "satisfactionRange": [90, 100],
+        "timeCost": 2,
+        "staminaCost": 10
+      },
+      {
+        "id": "tease_more",
+        "name": "Ещё дразнить",
+        "arousalRequired": 95,
+        "risk": "client_may_leave",
+        "reward": "edge_bonus × 2"
+      }
+    ]
+  }
+}

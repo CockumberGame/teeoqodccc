@@ -1,0 +1,127 @@
+{
+  "reputation": {
+    "gainFormula": "floor(satisfaction / 10)",
+    "maxPerNight": 25,
+    "baseClients": 3,
+    "reputationBonus": "floor(reputation / 20)",
+    "levels": [
+      { "threshold": 0, "name": "Новичок", "clientFlowBonus": 0, "color": "⚪" },
+      { "threshold": 50, "name": "Знакомая", "clientFlowBonus": 1, "color": "🟢" },
+      { "threshold": 100, "name": "Опытная", "clientFlowBonus": 2, "color": "🔵" },
+      { "threshold": 200, "name": "Популярная", "clientFlowBonus": 3, "color": "🟣" },
+      { "threshold": 350, "name": "Легенда", "clientFlowBonus": 4, "color": "🟠" }
+    ]
+  },
+  "reward": {
+    "baseReward": 30,
+    "sizeBonus": {
+      "small": 5,
+      "average": 10,
+      "large": 15,
+      "huge": 20,
+      "legendary": 30
+    },
+    "phaseBonus": {
+      "soft": 0,
+      "interested": 10,
+      "excited": 20,
+      "ready": 30,
+      "edge": 40,
+      "climax": 50
+    },
+    "tensionBonus": 15,
+    "satisfactionMultiplier": 0.5,
+    "preferenceMatchBonus": 10,
+    "preferenceMismatchPenalty": 15
+  },
+  "stamina": {
+    "slow": 5,
+    "normal": 7,
+    "intense": 10
+  },
+  "arousal": {
+    "phases": {
+      "soft": { "min": -15, "max": 0, "name": "Холодный", "multiplier": 0.8, "color": "🩶" },
+      "interested": { "min": 0, "max": 25, "name": "Заинтересован", "multiplier": 1.0, "color": "🟢" },
+      "excited": { "min": 25, "max": 50, "name": "Возбуждён", "multiplier": 1.25, "color": "🔵" },
+      "ready": { "min": 50, "max": 75, "name": "Готов", "multiplier": 1.5, "color": "🟣" },
+      "edge": { "min": 75, "max": 90, "name": "На грани", "multiplier": 1.8, "color": "🟠" },
+      "climax": { "min": 90, "max": 100, "name": "Финал", "multiplier": 2.0, "color": "🔴" }
+    },
+    "climaxThreshold": 90,
+    "earlyFinishThreshold": 75,
+    "getsSofterPenalty": {
+      "mentalDamage": 5,
+      "clientLeaveChance": 0.3,
+      "visualEffect": "gray_filter"
+    }
+  },
+  "skills": {
+    "upgradeBaseCost": 100,
+    "upgradeMultiplier": 1.8,
+    "maxLevel": 10
+  },
+  "patience": {
+    "baseDecay": 2,
+    "decayPerTurn": 1,
+    "states": {
+      "calm": { "threshold": 70, "rewardMultiplier": 1.0, "satisfactionMod": 0 },
+      "waiting": { "threshold": 40, "rewardMultiplier": 0.9, "satisfactionMod": -5 },
+      "impatient": { "threshold": 20, "rewardMultiplier": 0.75, "satisfactionMod": -10 },
+      "angry": { "threshold": 0, "rewardMultiplier": 0.5, "satisfactionMod": -20 }
+    }
+  },
+  "tension": {
+    "accumulationRate": {
+      "calm": 0.5,
+      "interested": 1.0,
+      "excited": 1.5
+    },
+    "decayRate": 0.3,
+    "maxLevel": 5,
+    "bonusPerLevel": 0.15
+  },
+  "diminishingReturns": {
+    "consecutive1": 1.0,
+    "consecutive2": 0.92,
+    "consecutive3": 0.82,
+    "consecutive4Plus": 0.70
+  },
+  "combat": {
+    "maxActionUsagePerClient": 3,
+    "fallbackCards": ["hand_soft", "head_soft", "bj_soft"]
+  },
+  "continueChance": {
+    "baseChance": 0.95,
+    "penaltyAfter3Actions": 0.15,
+    "bonusHighArousal": 0.1,
+    "penaltyLowArousal": 0.2
+  },
+  "earlyFinish": {
+    "minArousal": 70,
+    "baseSuccessChance": 0.5,
+    "satisfactionRange": [70, 100],
+    "bonusXp": 10,
+    "successFormula": "arousal + clientTags + playerSkills",
+    "clientTagModifiers": {
+      "impatient": 0.2,
+      "demanding": -0.1,
+      "loyal": 0.1,
+      "shy": 0.15
+    }
+  },
+  "flee": {
+    "moneyPenaltyTiers": [
+      { "turnsPercentMax": 35, "penaltyPercent": 15 },
+      { "turnsPercentMax": 75, "penaltyPercent": 30 },
+      { "turnsPercentMax": 100, "penaltyPercent": 45 }
+    ],
+    "reputationLossPerClient": 7,
+    "applyToSessionMoneyOnly": true
+  },
+  "clientQueue": {
+    "baseClients": 3,
+    "reputationDivisor": 20,
+    "randomBonusMax": 1
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "generous": {
+    "id": "generous",
+    "name": "Щедрый",
+    "description": "Любит оставлять щедрые чаевые, более терпелив",
+    "effects": {
+      "payoutMultiplier": 1.3,
+      "patienceMultiplier": 1.4,
+      "satisfactionBonus": 10,
+      "tipChance": 0.5
+    },
+    "behavior": {
+      "moodSwing": 0.8,
+      "arousalGrowth": 0.9,
+      "leaveChance": 0.3
+    },
+    "rarity": 0.15
+  },
+  "impatient": {
+    "id": "impatient",
+    "name": "Нетерпеливый",
+    "description": "Хочет всё быстро, легко раздражается",
+    "effects": {
+      "payoutMultiplier": 0.9,
+      "patienceMultiplier": 0.5,
+      "satisfactionBonus": -10,
+      "tipChance": 0.1
+    },
+    "behavior": {
+      "moodSwing": 1.5,
+      "arousalGrowth": 1.3,
+      "leaveChance": 0.7
+    },
+    "rarity": 0.12
+  },
+  "shy": {
+    "id": "shy",
+    "name": "Застенчивый",
+    "description": "Нервный, но старается угодить",
+    "effects": {
+      "payoutMultiplier": 0.85,
+      "patienceMultiplier": 1.2,
+      "satisfactionBonus": 5,
+      "tipChance": 0.2
+    },
+    "behavior": {
+      "moodSwing": 1.2,
+      "arousalGrowth": 0.8,
+      "leaveChance": 0.4
+    },
+    "rarity": 0.18
+  },
+  "demanding": {
+    "id": "demanding",
+    "name": "Требовательный",
+    "description": "Знает чего хочет, принимает только лучшее",
+    "effects": {
+      "payoutMultiplier": 1.5,
+      "patienceMultiplier": 0.6,
+      "satisfactionBonus": -5,
+      "tipChance": 0.4
+    },
+    "behavior": {
+      "moodSwing": 1.4,
+      "arousalGrowth": 1.1,
+      "leaveChance": 0.6
+    },
+    "rarity": 0.10
+  },
+  "curious": {
+    "id": "curious",
+    "name": "Любопытный",
+    "description": "Любит эксперименты, открыт новому",
+    "effects": {
+      "payoutMultiplier": 1.0,
+      "patienceMultiplier": 0.9,
+      "satisfactionBonus": 0,
+      "tipChance": 0.25
+    },
+    "behavior": {
+      "moodSwing": 1.0,
+      "arousalGrowth": 1.0,
+      "leaveChance": 0.35
+    },
+    "rarity": 0.20
+  },
+  "loyal": {
+    "id": "loyal",
+    "name": "Преданный",
+    "description": "Возвращается снова, лоялен к проверенным",
+    "effects": {
+      "payoutMultiplier": 1.1,
+      "patienceMultiplier": 1.4,
+      "satisfactionBonus": 15,
+      "tipChance": 0.35,
+      "returnChance": 0.8
+    },
+    "behavior": {
+      "moodSwing": 0.7,
+      "arousalGrowth": 0.95,
+      "leaveChance": 0.2
+    },
+    "rarity": 0.10
+  },
+  "rough": {
+    "id": "rough",
+    "name": "Грубый",
+    "description": "Предпочитает жёсткое обращение",
+    "effects": {
+      "payoutMultiplier": 1.2,
+      "patienceMultiplier": 0.8,
+      "satisfactionBonus": -5,
+      "tipChance": 0.3
+    },
+    "behavior": {
+      "moodSwing": 1.1,
+      "arousalGrowth": 1.2,
+      "leaveChance": 0.45
+    },
+    "rarity": 0.12
+  },
+  "gentle": {
+    "id": "gentle",
+    "name": "Нежный",
+    "description": "Любит ласку и заботу",
+    "effects": {
+      "payoutMultiplier": 1.0,
+      "patienceMultiplier": 1.2,
+      "satisfactionBonus": 10,
+      "tipChance": 0.3
+    },
+    "behavior": {
+      "moodSwing": 0.8,
+      "arousalGrowth": 0.85,
+      "leaveChance": 0.25
+    },
+    "rarity": 0.15
+  },
+  "experienced": {
+    "id": "experienced",
+    "name": "Опытный",
+    "description": "Знает толк в удовольствиях, сложно удивить",
+    "effects": {
+      "payoutMultiplier": 1.4,
+      "patienceMultiplier": 1.0,
+      "satisfactionBonus": 0,
+      "tipChance": 0.4
+    },
+    "behavior": {
+      "moodSwing": 0.9,
+      "arousalGrowth": 1.0,
+      "leaveChance": 0.3
+    },
+    "rarity": 0.08
+  },
+  "nervous": {
+    "id": "nervous",
+    "name": "Нервный",
+    "description": "Переживает, нуждается в ободрении",
+    "effects": {
+      "payoutMultiplier": 0.8,
+      "patienceMultiplier": 1.1,
+      "satisfactionBonus": 5,
+      "tipChance": 0.15
+    },
+    "behavior": {
+      "moodSwing": 1.3,
+      "arousalGrowth": 0.7,
+      "leaveChance": 0.5
+    },
+    "rarity": 0.15
+  }
+}

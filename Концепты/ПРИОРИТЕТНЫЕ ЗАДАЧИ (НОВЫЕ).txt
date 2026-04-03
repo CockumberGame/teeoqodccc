@@ -1,0 +1,600 @@
+=== ПРИОРИТЕТНЫЕ ЗАДАЧИ НА БЛИЖАЙШУЮ РАЗРАБОТКУ ===
+Последнее обновление: 18 марта 2026
+Статус: Критичные задачи выполнены ✅
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ ✅ ВЫПОЛНЕНО (18 марта 2026)                                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. ✅ InteractionSession как отдельный объект состояния
+   - Файл: src/core/InteractionSession.js
+   - Инкапсулировано: client, arousal, patience, mood, tension, actionHistory
+   - Добавлено: turn, stats, isFinished, finishReason
+   - Методы: playAction(), getState(), calculateReward()
+
+2. ✅ checkEndConditions() — централизованная проверка финала
+   - climax: arousal >= 95
+   - clientLeft: patience <= 0
+   - staminaDepleted: stamina <= 0 (через checkStaminaDepleted)
+   - Возвращает: {finished: bool, reason: string, satisfaction: number}
+
+3. ✅ checkStaminaDepleted() — проверка стамины
+   - Вызывается из GameEngine после applyActionResult
+   - Автоматически завершает встречу при stamina <= 0
+
+4. ✅ serialize/deserialize для InteractionSession
+   - Сохранение: client, turn, actionHistory, tensionLevel, stats
+   - Загрузка: полное восстановление состояния сессии
+
+5. ✅ Сохранение/загрузка interactionSession в GameEngine
+   - saveGame() сохраняет interactionSession
+   - loadGame() восстанавливает сессию и генерирует карты действий
+
+6. ✅ Генерация карт по фазам arousal (ActionDeckSystem)
+   - calm/interested: доступны slow, normal, observation, tease
+   - excited: все кроме edge_only
+   - ready: все действия
+   - edge: только intense и edge_only
+   - isInspected: убирает карту осмотра после использования
+   - clientMemory: учитывает wasInspected из прошлых визитов
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 🔴 КРАСНЫЙ ПРИОРИТЕТ (СЛЕДУЮЩИЕ ШАГИ)                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. InteractionSession как отдельный объект состояния
+   ─────────────────────────────────────────────────────
+   ПРОБЛЕМА: Сейчас состояние встречи размазано по GameEngine:
+   - this.currentClient
+   - this.arousal
+   - this.patience
+   - this.mood
+   - this.tensionLevel
+   - this.actionHistory
+   
+   РЕШЕНИЕ: Создать класс InteractionSession:
+   ```javascript
+   class InteractionSession {
+     constructor(client, playerState) {
+       this.client = client;
+       this.arousal = 0;
+       this.patience = client.patience;
+       this.mood = 'neutral';
+       this.tensionLevel = 0;
+       this.turn = 0;
+       this.maxTurns = 6;
+       this.isInspected = false;
+       this.actionHistory = [];
+       this.phase = 'calm';
+     }
+     
+     playAction(action, itemEffects) {
+       // Расчёт эффекта действия
+       this.turn++;
+       this.updatePhase();
+     }
+     
+     checkEndConditions() {
+       if (this.arousal >= 95) return 'climax';
+       if (this.patience <= 0) return 'left';
+       if (this.turn >= this.maxTurns) return 'timeout';
+       if (this.playerStamina <= 0) return 'staminaDepleted';
+       return null; // продолжается
+     }
+     
+     updatePhase() {
+       if (this.arousal < 15) this.phase = 'calm';
+       else if (this.arousal < 35) this.phase = 'interested';
+       else if (this.arousal < 60) this.phase = 'excited';
+       else if (this.arousal < 80) this.phase = 'ready';
+       else if (this.arousal < 95) this.phase = 'edge';
+       else this.phase = 'climax';
+     }
+     
+     serialize() { return {...} }
+     deserialize(data) { ... }
+   }
+   ```
+   
+   ПРЕИМУЩЕСТВА:
+   - Вся логика встречи в одном месте
+   - Лёгкая проверка финала
+   - Можно сохранить середину встречи
+   - Легко тестировать отдельно
+   
+   ФАЙЛЫ:
+   - src/core/InteractionSession.js (НОВЫЙ)
+   - src/engine/GameEngine.js (изменения)
+   
+   СЛОЖНОСТЬ: 2-3 часа
+
+
+2. Централизованная проверка окончания встречи
+   ─────────────────────────────────────────────────────
+   ПРОБЛЕМА: Проверки размазаны по разным методам:
+   - В playActionCard() проверка arousal
+   - В updateClientState() проверка patience
+   - В event system случайные проверки
+   
+   РЕШЕНИЕ: Один метод checkEndConditions() в InteractionSession:
+   ```javascript
+   checkEndConditions() {
+     const results = {
+       climax: this.arousal >= 95,
+       left: this.patience <= 0,
+       timeout: this.turn >= this.maxTurns,
+       staminaDepleted: this.playerStamina <= 0,
+       complication: this.complicationActive
+     };
+     
+     for (const [reason, met] of Object.entries(results)) {
+       if (met) return { ended: true, reason };
+     }
+     return { ended: false, reason: null };
+   }
+   
+   // В GameEngine
+   afterAction() {
+     const result = this.interactionSession.checkEndConditions();
+     if (result.ended) {
+       this.endInteraction(result.reason);
+     }
+   }
+   ```
+   
+   ПРЕИМУЩЕСТВА:
+   - Невозможно пропустить условие финала
+   - Легко добавлять новые условия
+   - Понятная отладка
+   
+   ФАЙЛЫ:
+   - src/core/InteractionSession.js (НОВЫЙ)
+   
+   СЛОЖНОСТЬ: 1 час (вместе с InteractionSession)
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 🟡 ЖЁЛТЫЙ ПРИОРИТЕТ (ВАЖНО ДЛЯ ГЕЙМПЛЕЯ)                               │
+└─────────────────────────────────────────────────────────────────────────┘
+
+3. Генерация карт в зависимости от фазы встречи
+   ─────────────────────────────────────────────────────
+   ПРОБЛЕМА: Сейчас игрок получает 2 случайные карты из общего пула.
+   Глупо иметь карту "осмотр" на фазе edge, когда всё уже ясно.
+   
+   РЕШЕНИЕ: Фильтрация карт по фазам:
+   ```javascript
+   getActionCards(phase, isInspected, clientMemory) {
+     let pool = [...this.actionDeck];
+     
+     // Фаза 1 (calm/interested) — больше карт осмотра, teasing
+     if (phase === 'calm' || phase === 'interested') {
+       pool = pool.filter(c => 
+         c.tags.includes('observation') || 
+         c.tags.includes('tease')
+       );
+     }
+     
+     // Фаза edge — только интенсивные действия
+     if (phase === 'edge') {
+       pool = pool.filter(c => c.intensity === 'intense');
+     }
+     
+     // Если уже осматривал — убрать карту осмотра
+     if (isInspected || clientMemory?.wasInspected) {
+       pool = pool.filter(c => !c.tags.includes('observation'));
+     }
+     
+     // Для "бывалых" клиентов — пометка в описании
+     if (clientMemory) {
+       pool = pool.map(card => ({
+         ...card,
+         description: card.description + 
+           (clientMemory.wasInspected ? ' [已知]' : '')
+       }));
+     }
+     
+     return this.randomSelect(pool, 2);
+   }
+   ```
+   
+   ПРЕИМУЩЕСТВА:
+   - Более осмысленный выбор карт
+   - Убирает "мусорные" карты
+   - Улучшает immersion
+   
+   ФАЙЛЫ:
+   - src/system/ActionDeckSystem.js (изменения)
+   - src/engine/GameEngine.js (изменения)
+   
+   СЛОЖНОСТЬ: 2 часа
+
+
+4. Магазин с оверлеем покупки
+   ─────────────────────────────────────────────────────
+   ПРОБЛЕМА: Нет возможности покупать предметы между ночами.
+   
+   РЕШЕНИЕ: UI оверлей с магазином:
+   ```javascript
+   // В HubScreen
+   const [shopOpen, setShopOpen] = useState(false);
+   
+   const shopItems = [
+     { id: 'lubricant', name: 'Лубрикант', cost: 50, 
+       effect: 'unlocks:deep_lube', icon: '💧' },
+     { id: 'bracelet', name: 'Браслет', cost: 75,
+       effect: '+10% trust gain', icon: '📿' },
+     { id: 'energy', name: 'Энергетик', cost: 30,
+       effect: '+5 stamina', icon: '⚡' },
+     { id: 'ruler', name: 'Линейка', cost: 100,
+       effect: 'unlocks:measure', icon: '📏' }
+   ];
+   
+   const buyItem = (item) => {
+     if (player.gold >= item.cost) {
+       player.gold -= item.cost;
+       inventory.push(item);
+     }
+   };
+   ```
+   
+   UI:
+   - Кнопка "Магазин" в хабе
+   - Оверлей на весь экран
+   - Сетка товаров (2x2 или 3x2)
+   - Кнопки "Купить" с проверкой золота
+   
+   ФАЙЛЫ:
+   - src/ui/ShopOverlay.jsx (НОВЫЙ)
+   - src/ui/HubScreen.jsx (изменения)
+   - src/system/InventorySystem.js (изменения)
+   
+   СЛОЖНОСТЬ: 3-4 часа
+
+
+5. Хаб с absolute positioning
+   ─────────────────────────────────────────────────────
+   ПРОБЛЕМА: Сейчас хаб — это просто меню с кнопками.
+   
+   РЕШЕНИЕ: Квартира с кликабельными объектами:
+   ```css
+   .apartment {
+     position: relative;
+     width: 800px;
+     height: 600px;
+     background: url(apartment-bg.png);
+   }
+   
+   .bed {
+     position: absolute;
+     left: 100px;
+     top: 300px;
+     width: 200px;
+     height: 150px;
+     cursor: pointer;
+   }
+   
+   .shelf {
+     position: absolute;
+     right: 50px;
+     top: 100px;
+     width: 150px;
+     height: 300px;
+     cursor: pointer;
+   }
+   
+   .door {
+     position: absolute;
+     left: 50px;
+     top: 200px;
+     width: 100px;
+     height: 200px;
+     cursor: pointer;
+   }
+   ```
+   
+   Кликабельные объекты:
+   - Кровать → "Восстановить stamina" (конец ночи)
+   - Полка → "Инвентарь / Магазин"
+   - Дверь → "Начать ночь"
+   - Зеркало → "Навыки / Статистика"
+   
+   ФАЙЛЫ:
+   - src/ui/HubScreen.jsx (полная переработка)
+   
+   СЛОЖНОСТЬ: 4-5 часов
+
+
+6. Run State (отделение сессии от прогресса)
+   ─────────────────────────────────────────────────────
+   ПРОБЛЕМА: Сейчас player хранит и постоянный прогресс, и временные статы ночи.
+   
+   РЕШЕНИЕ: Разделить на два объекта:
+   ```javascript
+   // В GameEngine
+   this.player = {
+     totalGold: 500,       // Постоянный
+     reputation: 50,       // Постоянный
+     skills: {...},        // Постоянный
+     inventory: [...]      // Постоянный
+   };
+   
+   this.runState = {
+     currentGold: 30,      // Заработано за ночь
+     stamina: 10,          // На эту ночь
+     psyche: 100,          // На эту ночь
+     clientsServed: 0,     // За ночь
+     nightNum: 5,          // Номер ночи
+     startTime: Date.now()
+   };
+   ```
+   
+   Методы:
+   ```javascript
+   startNight() {
+     this.runState = {
+       currentGold: 0,
+       stamina: this.getMaxStamina(),
+       psyche: 100,
+       clientsServed: 0,
+       nightNum: this.player.nightsPlayed + 1,
+       startTime: Date.now()
+     };
+   }
+   
+   endNight() {
+     this.player.totalGold += this.runState.currentGold;
+     this.player.nightsPlayed++;
+     this.runState = null;
+   }
+   ```
+   
+   ФАЙЛЫ:
+   - src/engine/GameEngine.js (изменения)
+   - src/system/SaveSystem.js (изменения)
+   
+   СЛОЖНОСТЬ: 2-3 часа
+
+
+7. Action modifiers from items
+   ─────────────────────────────────────────────────────
+   ПРОБЛЕМА: Предметы дают только статовые бонусы, не открывают новые действия.
+   
+   РЕШЕНИЕ: Предметы влияют на доступные действия:
+   ```javascript
+   // В data/items.json
+   {
+     "id": "lubricant",
+     "name": "Лубрикант",
+     "unlocksActions": ["deep_lube", "slow_lube"],
+     "modifiesActions": {
+       "deep": { arousalBonus: +5, staminaCost: -2 },
+       "intense": { staminaCost: -1 }
+     }
+   }
+   
+   // В InventorySystem
+   getAvailableActions(baseActions, inventory) {
+     let actions = [...baseActions];
+     const modifiers = {};
+     
+     for (const item of inventory) {
+       if (item.unlocksActions) {
+         actions.push(...item.unlocksActions);
+       }
+       if (item.modifiesActions) {
+         Object.assign(modifiers, item.modifiesActions);
+       }
+     }
+     
+     return { actions, modifiers };
+   }
+   ```
+   
+   ФАЙЛЫ:
+   - src/system/InventorySystem.js (изменения)
+   - src/engine/GameEngine.js (изменения)
+   - data/items.json (НОВЫЙ)
+   
+   СЛОЖНОСТЬ: 2 часа
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 🟢 ЗЕЛЁНЫЙ ПРИОРИТЕТ (ПОЛИРОВКА, НЕ КРИТИЧНО)                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+8. Microinteractions
+   ─────────────────────────────────────────────────────
+   Маленькие реакции UI на действия:
+   
+   ```css
+   /* Hover на карту */
+   .card:hover {
+     transform: translateY(-3px);
+     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+   }
+   
+   /* Клик по кнопке */
+   .btn:active {
+     transform: scale(0.98);
+   }
+   
+   /* Успешное действие */
+   .card.success {
+     animation: successFlash 0.3s;
+   }
+   
+   @keyframes successFlash {
+     0% { background: #4ade80; transform: scale(1.1); }
+     100% { background: transparent; transform: scale(1); }
+   }
+   
+   /* Ошибка */
+   .card.error {
+     animation: shake 0.3s;
+   }
+   
+   @keyframes shake {
+     0%, 100% { transform: translateX(0); }
+     25% { transform: translateX(-5px); }
+     75% { transform: translateX(5px); }
+   }
+   
+   /* Climax */
+   .climax-flash {
+     animation: climaxFlash 0.5s;
+   }
+   
+   @keyframes climaxFlash {
+     0% { background: #fbbf24; }
+     100% { background: transparent; }
+   }
+   ```
+   
+   ФАЙЛЫ:
+   - src/ui/CardView.jsx (изменения)
+   - src/styles/main.css (изменения)
+   
+   СЛОЖНОСТЬ: 1-2 часа
+
+
+9. Momentum mechanic
+   ─────────────────────────────────────────────────────
+   Бонус за повторение действий одного типа:
+   
+   ```javascript
+   // В InteractionSession
+   constructor() {
+     this.momentumLevel = 0;
+     this.lastActionType = null;
+   }
+   
+   playAction(action) {
+     // Проверка на повторение
+     if (action.type === this.lastActionType) {
+       this.momentumLevel++;
+     } else {
+       this.momentumLevel = 0;
+     }
+     this.lastActionType = action.type;
+     
+     // Применение бонуса
+     const momentumBonus = 1 + (this.momentumLevel * 0.1);
+     arousalGain *= momentumBonus;
+     staminaCost = Math.max(1, staminaCost - Math.floor(this.momentumLevel / 3));
+   }
+   ```
+   
+   ПРЕИМУЩЕСТВА:
+   - Поощряет стратегию
+   - Добавляет глубину
+   
+   ФАЙЛЫ:
+   - src/core/InteractionSession.js (изменения)
+   
+   СЛОЖНОСТЬ: 1 час
+
+
+10. ClientMemorySystem — УЖЕ РЕАЛИЗОВАНО ✅
+    ─────────────────────────────────────────────────────
+    ПРОВЕРЕНО: Файл src/system/ClientMemorySystem.js существует и работает.
+    
+    ФУНКЦИИ:
+    - addClient(clientData, satisfaction, wasInspected, revealedFetishes)
+    - getReturningClients(targetCount)
+    - updateClient(clientId, satisfaction, wasInspected)
+    - serialize() / deserialize()
+    
+    КЛИЕНТЫ ВОЗВРАЩАЮТСЯ:
+    - С шансом на основе satisfaction
+    - С сохранёнными открытыми фетишами
+    - С увеличенным visitCount
+    - С пометкой "бывалый" в карточке
+    
+    НЕ ТРЕБУЕТ ИЗМЕНЕНИЙ ✅
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 📋 ПЛАН РЕАЛИЗАЦИИ ПО ШАГАМ                                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+ШАГ 1 (2-3 часа):
+  □ Создать src/core/InteractionSession.js
+  □ Перенести логику встречи из GameEngine
+  □ Добавить checkEndConditions()
+  □ Протестировать
+
+ШАГ 2 (2 часа):
+  □ Обновить генерацию карт по фазам
+  □ Убрать карту осмотра после использования
+  □ Добавить пометку для "бывалых" клиентов
+
+ШАГ 3 (2-3 часа):
+  □ Разделить player и runState
+  □ Обновить save/load
+  □ Протестировать
+
+ШАГ 4 (3-4 часа):
+  □ Создать ShopOverlay.jsx
+  □ Добавить магазин в хаб
+  □ Реализовать покупку предметов
+
+ШАГ 5 (2 часа):
+  □ Обновить InventorySystem для action modifiers
+  □ Добавить предметы в data/items.json
+
+ШАГ 6 (4-5 часов):
+  □ Переработать HubScreen с absolute positioning
+  □ Добавить кликабельные объекты
+  □ Нарисовать/найти фон квартиры
+
+ШАГ 7 (1-2 часа):
+  □ Добавить microinteractions
+  □ Протестировать все анимации
+
+ИТОГО: ~18-22 часов разработки
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 📝 ЗАПРОС ДЛЯ CODEX (ШАГ 1 - InteractionSession)                       │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Create a new InteractionSession class to encapsulate all client interaction state.
+
+Currently the interaction state is scattered across GameEngine:
+- this.currentClient
+- this.arousal
+- this.patience
+- this.mood
+- this.tensionLevel
+- this.actionHistory
+
+This causes bugs where encounters can "hang" without ending.
+
+REQUIREMENTS:
+
+1. Create src/core/InteractionSession.js with:
+   - constructor(client, playerState)
+   - playAction(action, itemEffects) — calculates effect, updates state
+   - checkEndConditions() — returns {ended: bool, reason: string}
+   - updatePhase() — updates arousal phase (calm/interested/excited/ready/edge/climax)
+   - serialize() / deserialize() — for save system
+
+2. End conditions to check:
+   - climax: arousal >= 95
+   - left: patience <= 0
+   - timeout: turn >= maxTurns (6)
+   - staminaDepleted: player stamina <= 0
+
+3. Integrate with GameEngine:
+   - In startInteraction(): create new InteractionSession
+   - In playActionCard(): call session.playAction()
+   - After action: call session.checkEndConditions()
+   - If ended: call endInteraction(reason)
+
+4. Keep existing systems working:
+   - ClientMemorySystem
+   - InventorySystem
+   - All effect calculations
+
+TEST: Run npm run simulate and verify encounters end properly.

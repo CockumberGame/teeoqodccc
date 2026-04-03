@@ -1,0 +1,643 @@
+[
+  {
+    "id": "event_police_raid",
+    "name": "Полицейский рейд",
+    "text": "🚨 ПОЛИЦИЯ! Рейд на заведение. Нужно быстро реагировать.",
+    "tags": ["event", "danger", "police"],
+    "weight": 2,
+    "timing": "between_clients",
+    "conditions": {
+      "minTension": 40,
+      "minReputation": 10,
+      "turnRange": { "min": 3, "max": 20 }
+    },
+    "choices": [
+      {
+        "text": "Спрятаться и переждать",
+        "requiredSkills": { "charisma": 2 },
+        "effects": [
+          { "type": "lose_money", "value": 50 },
+          { "type": "lose_stamina", "value": 5 },
+          { "type": "lose_mental", "value": 8 }
+        ],
+        "successChance": 0.7,
+        "mentalImpact": 8
+      },
+      {
+        "text": "Договориться с полицией",
+        "requiredSkills": { "charisma": 4 },
+        "effects": [
+          { "type": "lose_money", "value": 100 },
+          { "type": "gain_xp", "value": 20 }
+        ],
+        "successChance": 0.5,
+        "mentalImpact": 5
+      }
+    ]
+  },
+  {
+    "id": "event_neighbor_discovers",
+    "name": "Соседка видела",
+    "text": "👀 Соседка видела, как ты выходила ночью. Слухи ползут...",
+    "tags": ["event", "neighbor", "reputation"],
+    "weight": 3,
+    "timing": "between_clients",
+    "conditions": {
+      "maxTrust": 40,
+      "turnRange": { "min": 1, "max": 10 }
+    },
+    "choices": [
+      {
+        "text": "Подкупить молчание",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "lose_money", "value": 40 },
+          { "type": "lose_mental", "value": 5 }
+        ],
+        "successChance": 0.8,
+        "mentalImpact": 5
+      },
+      {
+        "text": "Пригрозить",
+        "requiredSkills": { "charisma": 2 },
+        "effects": [
+          { "type": "lose_mental", "value": 3 },
+          { "type": "gain_reputation", "value": 1 }
+        ],
+        "successChance": 0.6,
+        "mentalImpact": 3
+      }
+    ]
+  },
+  {
+    "id": "event_competitor_sabotage",
+    "name": "Происки конкурентки",
+    "text": "💀 Конкурентка распускает слухи о тебе. Клиенты уходят.",
+    "tags": ["event", "competitor", "danger"],
+    "weight": 2,
+    "timing": "between_clients",
+    "conditions": {
+      "minReputation": 30,
+      "requiredTrait": "experienced"
+    },
+    "choices": [
+      {
+        "text": "Устроить разборку",
+        "requiredSkills": { "charisma": 3 },
+        "effects": [
+          { "type": "lose_money", "value": 30 },
+          { "type": "lose_mental", "value": 5 },
+          { "type": "gain_reputation", "value": 3 }
+        ],
+        "successChance": 0.6,
+        "mentalImpact": 5
+      },
+      {
+        "text": "Доказать делом",
+        "requiredSkills": { "oral_skill": 3 },
+        "effects": [
+          { "type": "lose_stamina", "value": 8 },
+          { "type": "gain_reputation", "value": 5 },
+          { "type": "gain_xp", "value": 15 }
+        ],
+        "successChance": 0.7,
+        "mentalImpact": 3
+      }
+    ]
+  },
+  {
+    "id": "event_sudden_illness",
+    "name": "Внезапная тошнота",
+    "text": "🤒 Внезапная тошнота. Что-то не то съела...",
+    "tags": ["event", "illness", "health"],
+    "weight": 3,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Прерваться и отдохнуть",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "lose_money", "value": 30 },
+          { "type": "gain_stamina", "value": 10 },
+          { "type": "gain_mental", "value": 5 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      },
+      {
+        "text": "Продолжить через силу",
+        "requiredSkills": { "endurance": 2 },
+        "effects": [
+          { "type": "lose_stamina", "value": 8 },
+          { "type": "lose_mental", "value": 6 },
+          { "type": "gain_money", "value": 20 }
+        ],
+        "successChance": 0.5,
+        "mentalImpact": 6
+      }
+    ]
+  },
+  {
+    "id": "event_morality_police",
+    "name": "Полиция нравов",
+    "text": "⚖️ Полиция нравов интересуется твоей деятельностью.",
+    "tags": ["event", "danger", "police"],
+    "weight": 1,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Дать взятку",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "lose_money", "value": 150 },
+          { "type": "lose_mental", "value": 8 }
+        ],
+        "successChance": 0.8,
+        "mentalImpact": 8
+      },
+      {
+        "text": "Использовать связи",
+        "requiredSkills": { "charisma": 4, "reputation": 50 },
+        "effects": [
+          { "type": "lose_money", "value": 50 },
+          { "type": "gain_reputation", "value": 2 }
+        ],
+        "successChance": 0.4,
+        "mentalImpact": 5
+      }
+    ]
+  },
+  {
+    "id": "event_generous_tip",
+    "name": "Щедрый клиент",
+    "text": "✨ Один из клиентов оказался очень доволен и оставил щедрые чаевые!",
+    "tags": ["event", "bonus", "money"],
+    "weight": 5,
+    "timing": "after_client",
+    "choices": [
+      {
+        "text": "Принять с благодарностью",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "gain_money", "value": 50 },
+          { "type": "gain_mental", "value": 5 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      },
+      {
+        "text": "Предложить премиум-услугу",
+        "requiredSkills": { "charisma": 2 },
+        "effects": [
+          { "type": "gain_money", "value": 80 },
+          { "type": "lose_stamina", "value": 5 },
+          { "type": "gain_reputation", "value": 2 }
+        ],
+        "successChance": 0.7,
+        "mentalImpact": 2
+      }
+    ]
+  },
+  {
+    "id": "event_equipment_break",
+    "name": "Поломка оборудования",
+    "text": "💔 Что-то сломалось в комнате. Нужен ремонт.",
+    "tags": ["event", "equipment", "money"],
+    "weight": 3,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Починить самой",
+        "requiredSkills": { "endurance": 2 },
+        "effects": [
+          { "type": "lose_stamina", "value": 10 },
+          { "type": "lose_money", "value": 20 }
+        ],
+        "successChance": 0.6,
+        "mentalImpact": 3
+      },
+      {
+        "text": "Вызвать мастера",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "lose_money", "value": 60 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      }
+    ]
+  },
+  {
+    "id": "event_regular_returns",
+    "name": "Постоянный клиент вернулся",
+    "text": "🔁 Твой постоянный клиент пришёл снова и хочет только тебя!",
+    "tags": ["event", "bonus", "regular"],
+    "weight": 4,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Обслужить лично",
+        "requiredSkills": { "oral_skill": 2 },
+        "effects": [
+          { "type": "gain_money", "value": 70 },
+          { "type": "lose_stamina", "value": 5 },
+          { "type": "gain_reputation", "value": 4 },
+          { "type": "gain_xp", "value": 15 }
+        ],
+        "successChance": 0.85,
+        "mentalImpact": 2
+      },
+      {
+        "text": "Сделать особый приём",
+        "requiredSkills": { "oral_skill": 3, "teasing": 2 },
+        "effects": [
+          { "type": "gain_money", "value": 100 },
+          { "type": "lose_stamina", "value": 7 },
+          { "type": "gain_reputation", "value": 6 },
+          { "type": "gain_xp", "value": 25 }
+        ],
+        "successChance": 0.65,
+        "mentalImpact": 4
+      }
+    ]
+  },
+  {
+    "id": "event_bad_review",
+    "name": "Плохой отзыв",
+    "text": "📱 Кто-то оставил плохой отзыв онлайн. Репутация под угрозой.",
+    "tags": ["event", "reputation", "danger"],
+    "weight": 3,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Игнорировать",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "lose_reputation", "value": 5 },
+          { "type": "lose_mental", "value": 3 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 3
+      },
+      {
+        "text": "Ответить публично",
+        "requiredSkills": { "charisma": 3 },
+        "effects": [
+          { "type": "lose_mental", "value": 5 },
+          { "type": "gain_reputation", "value": 3 }
+        ],
+        "successChance": 0.6,
+        "mentalImpact": 5
+      }
+    ]
+  },
+  {
+    "id": "event_vip_offer",
+    "name": "VIP предложение",
+    "text": "💎 Тебе поступило предложение обслужить VIP-клиента за повышенную плату.",
+    "tags": ["event", "vip", "bonus"],
+    "weight": 2,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Принять предложение",
+        "requiredSkills": { "oral_skill": 3, "charisma": 2 },
+        "effects": [
+          { "type": "gain_money", "value": 150 },
+          { "type": "lose_stamina", "value": 10 },
+          { "type": "lose_mental", "value": 5 },
+          { "type": "gain_reputation", "value": 5 },
+          { "type": "gain_xp", "value": 30 }
+        ],
+        "successChance": 0.6,
+        "mentalImpact": 8
+      },
+      {
+        "text": "Отказаться (слишком рискованно)",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "lose_reputation", "value": 2 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      }
+    ]
+  },
+  {
+    "id": "event_power_outage",
+    "name": "Отключение электричества",
+    "text": "💡 Свет погас! Работать в темноте сложнее...",
+    "tags": ["event", "environment", "difficulty"],
+    "weight": 3,
+    "timing": "during_session",
+    "choices": [
+      {
+        "text": "Работать на ощупь",
+        "requiredSkills": { "oral_skill": 3 },
+        "effects": [
+          { "type": "gain_money", "value": 40 },
+          { "type": "lose_stamina", "value": 6 },
+          { "type": "gain_xp", "value": 10 }
+        ],
+        "successChance": 0.55,
+        "mentalImpact": 4
+      },
+      {
+        "text": "Зажечь свечи (атмосфера)",
+        "requiredSkills": { "charisma": 2 },
+        "effects": [
+          { "type": "gain_money", "value": 50 },
+          { "type": "lose_stamina", "value": 4 },
+          { "type": "gain_mental", "value": 3 },
+          { "type": "gain_reputation", "value": 2 }
+        ],
+        "successChance": 0.7,
+        "mentalImpact": 2
+      }
+    ]
+  },
+  {
+    "id": "event_drunk_client",
+    "name": "Пьяный клиент",
+    "text": "🍺 Клиент пришёл нетрезвым. Поведение непредсказуемо.",
+    "tags": ["event", "client", "danger"],
+    "weight": 4,
+    "timing": "during_session",
+    "choices": [
+      {
+        "text": "Обслужить быстро",
+        "requiredSkills": { "oral_skill": 2, "endurance": 2 },
+        "effects": [
+          { "type": "gain_money", "value": 40 },
+          { "type": "lose_stamina", "value": 6 },
+          { "type": "lose_mental", "value": 4 }
+        ],
+        "successChance": 0.65,
+        "mentalImpact": 6
+      },
+      {
+        "text": "Отказать в обслуживании",
+        "requiredSkills": { "charisma": 3 },
+        "effects": [
+          { "type": "lose_money", "value": 20 },
+          { "type": "gain_mental", "value": 5 },
+          { "type": "lose_reputation", "value": 1 }
+        ],
+        "successChance": 0.7,
+        "mentalImpact": 3
+      }
+    ]
+  },
+  {
+    "id": "event_skill_breakthrough",
+    "name": "Прорыв в навыке",
+    "text": "💡 Во время работы ты поняла важную технику! Навык улучшается.",
+    "tags": ["event", "bonus", "skill"],
+    "weight": 3,
+    "timing": "after_client",
+    "choices": [
+      {
+        "text": "Запомнить момент",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "gain_xp", "value": 25 },
+          { "type": "gain_mental", "value": 5 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      },
+      {
+        "text": "Сразу применить на практике",
+        "requiredSkills": { "oral_skill": 2 },
+        "effects": [
+          { "type": "gain_xp", "value": 35 },
+          { "type": "lose_stamina", "value": 3 },
+          { "type": "gain_reputation", "value": 2 }
+        ],
+        "successChance": 0.8,
+        "mentalImpact": 2
+      }
+    ]
+  },
+  {
+    "id": "event_couple_arrives",
+    "name": "Пара клиентов",
+    "text": "👫 Пришла пара! Хотят шоу на двоих. Оплата выше, но сложнее.",
+    "tags": ["event", "client", "special"],
+    "weight": 2,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Принять вызов",
+        "requiredSkills": { "oral_skill": 3, "charisma": 2, "endurance": 3 },
+        "effects": [
+          { "type": "gain_money", "value": 180 },
+          { "type": "lose_stamina", "value": 12 },
+          { "type": "lose_mental", "value": 6 },
+          { "type": "gain_reputation", "value": 8 },
+          { "type": "gain_xp", "value": 40 }
+        ],
+        "successChance": 0.55,
+        "mentalImpact": 10
+      },
+      {
+        "text": "Отказаться (не твой формат)",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "lose_money", "value": 30 },
+          { "type": "gain_mental", "value": 3 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      }
+    ]
+  },
+  {
+    "id": "event_mental_exhaustion",
+    "name": "Эмоциональное выгорание",
+    "text": "😞 Ты чувствуешь пустоту. Работа давит на психику.",
+    "tags": ["event", "mental", "health"],
+    "weight": 4,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Взять перерыв 5 минут",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "lose_money", "value": 25 },
+          { "type": "gain_mental", "value": 15 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      },
+      {
+        "text": "Продолжить через силу",
+        "requiredSkills": { "endurance": 3 },
+        "effects": [
+          { "type": "lose_mental", "value": 10 },
+          { "type": "gain_money", "value": 30 },
+          { "type": "lose_stamina", "value": 5 }
+        ],
+        "successChance": 0.6,
+        "mentalImpact": 8
+      }
+    ]
+  },
+  {
+    "id": "event_secret_admirer",
+    "name": "Тайный поклонник",
+    "text": "💌 Тебе оставили анонимную записку с комплиментами и деньгами.",
+    "tags": ["event", "bonus", "mystery"],
+    "weight": 3,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Принять подарок",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "gain_money", "value": 40 },
+          { "type": "gain_mental", "value": 8 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      },
+      {
+        "text": "Попробовать найти автора",
+        "requiredSkills": { "charisma": 2, "perception": 1 },
+        "effects": [
+          { "type": "gain_money", "value": 60 },
+          { "type": "gain_reputation", "value": 3 },
+          { "type": "lose_stamina", "value": 3 }
+        ],
+        "successChance": 0.5,
+        "mentalImpact": 3
+      }
+    ]
+  },
+  {
+    "id": "event_equipment_upgrade",
+    "name": "Улучшение оборудования",
+    "text": "🔧 Появилась возможность улучшить оборудование комнаты.",
+    "tags": ["event", "upgrade", "money"],
+    "weight": 2,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Купить новое оборудование (100$)",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "lose_money", "value": 100 },
+          { "type": "gain_reputation", "value": 5 },
+          { "type": "gain_xp", "value": 20 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0,
+        "permanentBonus": "equipment_upgraded"
+      },
+      {
+        "text": "Отложить на потом",
+        "requiredSkills": {},
+        "effects": [],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      }
+    ]
+  },
+  {
+    "id": "event_rush_hour",
+    "name": "Час пик",
+    "text": "🕐 Внезапный наплыв клиентов! Можно заработать больше, но...",
+    "tags": ["event", "opportunity", "risk"],
+    "weight": 3,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Взять больше клиентов",
+        "requiredSkills": { "endurance": 3 },
+        "effects": [
+          { "type": "gain_money", "value": 80 },
+          { "type": "lose_stamina", "value": 15 },
+          { "type": "lose_mental", "value": 8 },
+          { "type": "gain_reputation", "value": 4 }
+        ],
+        "successChance": 0.65,
+        "mentalImpact": 8
+      },
+      {
+        "text": "Работать в обычном темпе",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "gain_money", "value": 40 },
+          { "type": "lose_stamina", "value": 6 }
+        ],
+        "successChance": 0.9,
+        "mentalImpact": 2
+      }
+    ]
+  },
+  {
+    "id": "event_health_scare",
+    "name": "Проблемы со здоровьем",
+    "text": "🏥 Ты заметила тревожные симптомы. Стоит ли продолжать?",
+    "tags": ["event", "health", "danger"],
+    "weight": 2,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Прервать смену и обратиться к врачу",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "lose_money", "value": 80 },
+          { "type": "gain_stamina", "value": 20 },
+          { "type": "gain_mental", "value": 10 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      },
+      {
+        "text": "Продолжить работу",
+        "requiredSkills": { "endurance": 4 },
+        "effects": [
+          { "type": "gain_money", "value": 50 },
+          { "type": "lose_stamina", "value": 10 },
+          { "type": "lose_mental", "value": 5 },
+          { "type": "lose_health", "value": 1 }
+        ],
+        "successChance": 0.5,
+        "mentalImpact": 10
+      }
+    ]
+  },
+  {
+    "id": "event_lucky_night",
+    "name": "Удачная ночь",
+    "text": "🍀 Всё идёт как по маслу. Клиенты довольны, чаевые сыпятся!",
+    "tags": ["event", "bonus", "luck"],
+    "weight": 2,
+    "timing": "between_clients",
+    "choices": [
+      {
+        "text": "Пользоваться моментом",
+        "requiredSkills": {},
+        "effects": [
+          { "type": "gain_money", "value": 60 },
+          { "type": "gain_mental", "value": 10 },
+          { "type": "gain_reputation", "value": 3 }
+        ],
+        "successChance": 1.0,
+        "mentalImpact": 0
+      },
+      {
+        "text": "Не расслабляться, работать дальше",
+        "requiredSkills": { "endurance": 2 },
+        "effects": [
+          { "type": "gain_money", "value": 80 },
+          { "type": "lose_stamina", "value": 5 },
+          { "type": "gain_xp", "value": 15 }
+        ],
+        "successChance": 0.85,
+        "mentalImpact": 2
+      }
+    ]
+  }
+]

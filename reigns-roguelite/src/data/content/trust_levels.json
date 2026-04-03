@@ -1,0 +1,65 @@
+{
+  "_comment": "ЗАПОЛНИТЬ САМОСТОЯТЕЛЬНО — контент для взрослых",
+  "_description": "Тексты уровней доверия и бонусов для TrustSystem",
+  
+  "levels": [
+    {
+      "threshold": 0,
+      "name": "Незнакомец",
+      "description": "Первая встреча, всё впереди"
+    },
+    {
+      "threshold": 25,
+      "name": "Знакомый",
+      "description": "Начинает доверять, расслабляется"
+    },
+    {
+      "threshold": 50,
+      "name": "Проверенный",
+      "description": "Доверяет вам, открывается"
+    },
+    {
+      "threshold": 75,
+      "name": "Любимый",
+      "description": "Особое отношение, полная отдача"
+    },
+    {
+      "threshold": 100,
+      "name": "Постоянный",
+      "description": "Полное доверие, готов на всё"
+    }
+  ],
+
+  "bonuses": [
+    {
+      "threshold": 0,
+      "rewardMultiplier": 1.0,
+      "returnChance": 0.2,
+      "description": "Без бонусов"
+    },
+    {
+      "threshold": 25,
+      "rewardMultiplier": 1.1,
+      "returnChance": 0.35,
+      "description": "+10% к награде"
+    },
+    {
+      "threshold": 50,
+      "rewardMultiplier": 1.25,
+      "returnChance": 0.5,
+      "description": "+25% к награде, чаще возвращается"
+    },
+    {
+      "threshold": 75,
+      "rewardMultiplier": 1.4,
+      "returnChance": 0.7,
+      "description": "+40% к награде, почти всегда возвращается"
+    },
+    {
+      "threshold": 100,
+      "rewardMultiplier": 1.6,
+      "returnChance": 0.9,
+      "description": "+60% к награде, преданный клиент"
+    }
+  ]
+}

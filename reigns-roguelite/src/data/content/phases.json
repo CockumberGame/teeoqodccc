@@ -1,0 +1,182 @@
+{
+  "_meta": {
+    "description": "Система фаз клиента (6 фаз + gets_softer флаг)",
+    "version": "0.7.0",
+    "date": "2026-03-23"
+  },
+
+  "phases": {
+    "soft": {
+      "id": "soft",
+      "name": "Холодный",
+      "arousalRange": { "min": -15, "max": 0 },
+      "color": "🩶",
+      "colorHex": "#6b7280",
+      "description": "Клиент холоден или сопротивляется. Отрицательный arousal.",
+      "availableCards": ["soft"],
+      "successChanceModifier": -0.20,
+      "mentalCostModifier": 1.5,
+      "staminaCostModifier": 1.3,
+      "rarePhase": true,
+      "rarePhaseChance": 0.1,
+      "minReputationForRare": 10
+    },
+
+    "interested": {
+      "id": "interested",
+      "name": "Заинтересован",
+      "arousalRange": { "min": 0, "max": 25 },
+      "color": "🟢",
+      "colorHex": "#22c55e",
+      "description": "Клиент заинтересован. Базовая стартовая фаза.",
+      "availableCards": ["soft", "mid"],
+      "successChanceModifier": 0,
+      "mentalCostModifier": 1.0,
+      "staminaCostModifier": 1.0,
+      "rarePhase": false
+    },
+
+    "excited": {
+      "id": "excited",
+      "name": "Возбуждён",
+      "arousalRange": { "min": 25, "max": 50 },
+      "color": "🔵",
+      "colorHex": "#3b82f6",
+      "description": "Клиент возбуждён. Средняя фаза взаимодействия.",
+      "availableCards": ["soft", "mid", "intense"],
+      "successChanceModifier": 0.05,
+      "mentalCostModifier": 1.0,
+      "staminaCostModifier": 1.0,
+      "rarePhase": false
+    },
+
+    "ready": {
+      "id": "ready",
+      "name": "Готов",
+      "arousalRange": { "min": 50, "max": 75 },
+      "color": "🟣",
+      "colorHex": "#a855f7",
+      "description": "Клиент готов к интенсивным действиям.",
+      "availableCards": ["soft", "mid", "intense", "special"],
+      "successChanceModifier": 0.10,
+      "mentalCostModifier": 1.0,
+      "staminaCostModifier": 1.0,
+      "rarePhase": false
+    },
+
+    "edge": {
+      "id": "edge",
+      "name": "На грани",
+      "arousalRange": { "min": 75, "max": 95 },
+      "color": "🟠",
+      "colorHex": "#f97316",
+      "description": "Клиент на грани. Бонус к деньгам и XP за риск.",
+      "availableCards": ["soft", "mid", "intense", "special"],
+      "successChanceModifier": 0.05,
+      "mentalCostModifier": 1.2,
+      "staminaCostModifier": 1.1,
+      "edgeBonus": {
+        "moneyMultiplier": 1.5,
+        "xpMultiplier": 1.3
+      },
+      "rarePhase": false
+    },
+
+    "climax": {
+      "id": "climax",
+      "name": "Финал",
+      "arousalRange": { "min": 95, "max": 100 },
+      "color": "🔴",
+      "colorHex": "#ef4444",
+      "description": "Финальная стадия. Выбор исхода.",
+      "availableCards": ["special"],
+      "successChanceModifier": 0,
+      "mentalCostModifier": 1.0,
+      "staminaCostModifier": 1.0,
+      "climaxChoice": true,
+      "rarePhase": false
+    }
+  },
+
+  "gets_softer": {
+    "id": "gets_softer",
+    "name": "Регресс",
+    "description": "Не фаза, а триггер при неудачном действии. Arousal понижается.",
+    "trigger": "failed_action_with_arousal_loss",
+    "effects": {
+      "mentalDamage": 5,
+      "clientLeaveChance": 0.30,
+      "patienceLoss": 15,
+      "visualEffect": "gray_filter",
+      "arousalLossMultiplier": 1.5
+    },
+    "recoveryActions": ["t_ease_soft", "t_ease_mid"],
+    "autoRecoverTurns": 1
+  },
+
+  "phaseTransitions": {
+    "soft_to_interested": {
+      "from": "soft",
+      "to": "interested",
+      "condition": "arousal >= 0",
+      "message": "Клиент начинает проявлять интерес..."
+    },
+    "interested_to_excited": {
+      "from": "interested",
+      "to": "excited",
+      "condition": "arousal >= 25",
+      "message": "Клиент возбуждается..."
+    },
+    "excited_to_ready": {
+      "from": "excited",
+      "to": "ready",
+      "condition": "arousal >= 50",
+      "message": "Клиент готов к большему..."
+    },
+    "ready_to_edge": {
+      "from": "ready",
+      "to": "edge",
+      "condition": "arousal >= 75",
+      "message": "Клиент на грани!"
+    },
+    "edge_to_climax": {
+      "from": "edge",
+      "to": "climax",
+      "condition": "arousal >= 95",
+      "message": "ФИНАЛ!"
+    },
+    "regress_to_soft": {
+      "from": "any",
+      "to": "soft",
+      "condition": "arousal < 0 AND gets_softer_triggered",
+      "message": "Клиент охладел..."
+    }
+  },
+
+  "cardGenerationRules": {
+    "cardsPerTurn": 2,
+    "guaranteedPhaseCard": true,
+    "guaranteedPhaseCardDescription": "Минимум 1 карта текущего или соседнего уровня интенсивности",
+    "neighborIntensities": {
+      "soft": ["mid"],
+      "mid": ["soft", "intense"],
+      "intense": ["mid", "special"],
+      "special": ["intense"]
+    },
+    "fallbackLend": {
+      "enabled": true,
+      "description": "Если у игрока нет карт под фазу → игра 'одалживает' базовую карту"
+    }
+  },
+
+  "arousalFormulas": {
+    "baseGain": "action.effects.arousal × phase.multiplier × (1 + skillBonus)",
+    "diminishingReturns": {
+      "consecutive2": 0.75,
+      "consecutive3": 0.50,
+      "consecutive4Plus": 0.25
+    },
+    "teasingReset": "arousal = arousal × (1 - teasing_skill.level × 0.05)",
+    "getsSofterLoss": "arousal = arousal - (action.failureLoss × gets_softer.arousalLossMultiplier)"
+  }
+}
