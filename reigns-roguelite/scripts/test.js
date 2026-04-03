@@ -110,6 +110,65 @@ test('playActionCard работает корректно', () => {
   assert(engine.timeSystem.currentTurn > 0, 'Ход должен увеличиться');
 });
 
+test('после завершения клиента следующий клиент получает карты действий', () => {
+  const engine = new GameEngine();
+  engine.initPlayer('Тест');
+  engine.startNightSession();
+
+  assert(engine.currentActionCards.length > 0, 'У первого клиента должны быть карты');
+
+  // Форсируем завершение клиента по non-climax пути
+  engine.interactionSession.isFinished = true;
+  engine.interactionSession.finishReason = 'clientLeft';
+  const result = engine.resolveInteractionEnd({ finishReason: 'clientLeft' });
+
+  assert(result.success === true, 'Завершение клиента должно пройти успешно');
+  assert(engine.gameState === 'playing' || engine.gameState === 'nightSummary', 'Игра должна продолжаться или завершить ночь');
+
+  if (engine.gameState === 'playing') {
+    assert(engine.interactionSession, 'Для следующего клиента должна быть активная сессия');
+    assert(engine.currentActionCards.length > 0, 'У следующего клиента должны быть карты действий');
+  }
+});
+
+test('getActionState возвращает иммутабельные копии карточек', () => {
+  const engine = new GameEngine();
+  engine.initPlayer('Тест');
+  engine.startNightSession();
+
+  const firstState = engine.getActionState();
+  assert(firstState.currentActionCards.length > 0, 'Карты должны быть в состоянии');
+
+  // Портим локальную копию UI-состояния
+  firstState.currentActionCards.length = 0;
+
+  const secondState = engine.getActionState();
+  assert(secondState.currentActionCards.length > 0, 'Мутация UI-копии не должна ломать engine state');
+});
+
+test('ensureActionCardsForInteraction восстанавливает карты если они очищены', () => {
+  const engine = new GameEngine();
+  engine.initPlayer('Тест');
+  engine.startNightSession();
+
+  engine.currentActionCards = [];
+  const recovered = engine.ensureActionCardsForInteraction();
+
+  assert(recovered === true, 'Карты должны восстановиться');
+  assert(engine.currentActionCards.length > 0, 'После восстановления карты не должны быть пустыми');
+});
+
+test('playActionCard пытается самовосстановить карты перед ходом', () => {
+  const engine = new GameEngine();
+  engine.initPlayer('Тест');
+  engine.startNightSession();
+
+  engine.currentActionCards = [];
+  const result = engine.playActionCard(0);
+
+  assert(result.success === true, 'Действие должно выполниться после самовосстановления карт');
+});
+
 test('playActionCard тратит стамину', () => {
   const engine = new GameEngine();
   engine.initPlayer('Тест');

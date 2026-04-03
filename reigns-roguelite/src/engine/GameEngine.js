@@ -235,6 +235,7 @@ class GameEngine {
    */
   startNextInteraction() {
     const client = this.deckManager.getCurrentClient();
+    this.currentClientIndex = this.deckManager.currentClientIndex;
 
     if (!client) {
       // Клиенты закончились - конец ночи
@@ -295,6 +296,7 @@ class GameEngine {
       client.id,
       1  // turnNumber: первый ход
     );
+    this.ensureActionCardsForInteraction();
 
     this.eventBus.emit('interactionStarted', {
       clientId: client.id,
@@ -318,8 +320,10 @@ class GameEngine {
       return { success: false, reason: 'Нет активной встречи' };
     }
 
+    this.ensureActionCardsForInteraction();
+
     if (!this.currentActionCards[actionIndex]) {
-      return { success: false, reason: 'Неверный индекс карты' };
+      return { success: false, reason: 'Неверный индекс карты или нет доступных действий' };
     }
 
     const action = this.currentActionCards[actionIndex];
@@ -662,6 +666,7 @@ class GameEngine {
     // Переходим к следующему клиенту
     this.gameState = 'playing';
     this.deckManager.nextClient();
+    this.currentClientIndex = this.deckManager.currentClientIndex;
     this.interactionSession = null;
     this.currentActionCards = [];
 
@@ -721,6 +726,7 @@ class GameEngine {
 
     // Переходим к следующему клиенту
     this.deckManager.nextClient();
+    this.currentClientIndex = this.deckManager.currentClientIndex;
     this.interactionSession = null;
     this.currentActionCards = [];
 
@@ -793,8 +799,9 @@ class GameEngine {
    * Обновить терпение следующего клиента (Этап 2: реальная реализация)
    */
   updatePatienceForNextClient() {
-    const nextIndex = this.currentClientIndex + 1;
-    const clients = this.deckManager.clients || [];
+    const currentIndex = this.deckManager.currentClientIndex || 0;
+    const nextIndex = currentIndex + 1;
+    const clients = this.deckManager.clientQueue || [];
 
     if (nextIndex < clients.length) {
       const nextClient = clients[nextIndex];
@@ -1045,6 +1052,8 @@ class GameEngine {
    * Получить состояние игры
    */
   getGameState() {
+    const queueStats = this.deckManager.getStats();
+
     return {
       player: this.player,
       runState: this.runState.getState(),
@@ -1057,9 +1066,9 @@ class GameEngine {
       sessionStats: this.sessionStats,
       lastNightReason: this.lastNightReason,
       clientQueueStats: {
-        total: this.deckManager.getTotalCount(),
-        remaining: this.deckManager.getRemainingCount(),
-        current: this.currentClientIndex + 1
+        total: queueStats.total,
+        remaining: queueStats.remaining,
+        current: queueStats.total > 0 ? queueStats.currentIndex + 1 : 0
       }
     };
   }
@@ -1093,6 +1102,7 @@ class GameEngine {
    */
   getActionState() {
     if (!this.interactionSession) return null;
+    this.ensureActionCardsForInteraction();
 
     const state = this.interactionSession.getState();
     const clientId = this.currentCard?.clientData?.id || null;
@@ -1103,12 +1113,53 @@ class GameEngine {
         finished: state.isFinished,
         actionsTaken: state.turn
       },
-      currentActionCards: this.currentActionCards,
+      currentActionCards: this.currentActionCards.map(card => ({ ...card })),
       edgeTension: state.edgeTension,
       tensionLevel: state.tensionLevel,
-      actionHistory: state.actionHistory,
+      actionHistory: state.actionHistory.map(entry => ({ ...entry })),
       actionUsage: { ...this.actionDeckSystem.currentClientUsage }  // ← Копия объекта!
     };
+  }
+
+  /**
+   * Защита от состояния "НЕТ ДЕЙСТВИЙ" при активной встрече:
+   * если карты пустые, пытаемся регенерировать их из актуального состояния сессии.
+   * @returns {boolean} true если карты доступны после проверки
+   */
+  ensureActionCardsForInteraction() {
+    if (!this.interactionSession) return false;
+    if (this.currentActionCards.length > 0) return true;
+
+    const client = this.currentCard?.clientData || this.interactionSession.client;
+    if (!client) return false;
+
+    const clientId = client.id || this.interactionSession.client?.id;
+    if (!clientId) return false;
+
+    const turnNumber = (this.interactionSession.turn || 0) + 1;
+    const sessionClient = {
+      ...client,
+      arousal: this.interactionSession.client.arousal
+    };
+
+    this.currentActionCards = this.actionDeckSystem.generateActionCards(
+      sessionClient,
+      this.player,
+      this.skillSystem,
+      clientId,
+      turnNumber
+    );
+
+    if (this.currentActionCards.length > 0) {
+      this.eventBus.emit('actionCardsRecovered', {
+        clientId,
+        turnNumber,
+        cardsCount: this.currentActionCards.length
+      });
+      return true;
+    }
+
+    return false;
   }
 
   /**
